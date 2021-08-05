@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- to activate annotations in beans already registered in the ApplicationContext -->
+	<context:annotation-config />
+
+	<!-- turn on spring transaction annotation -->
+	<tx:annotation-driven transaction-manager="postgresTransactionManager" />
+
+	<!-- Transaction Manager -->
+	<bean id="postgresTransactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="postgreSessionFactory" />
+	</bean>
+
+	<!-- Session Factory -->
+	<bean id="postgreSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="postgreDataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.vinodh.book.model.Book</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.jdbc.lob.non_contextual_creation">true</prop>
+				<prop key="hibernate.temp.use_jdbc_metadata_defaults">true</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="postgreHibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+	    <property name="sessionFactory" ref="postgreSessionFactory"></property>
+    </bean>  
+
+	<!-- dataSource configuration -->
+	<bean id="postgreDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="XXXXXXX" />
+		<property name="username" value="XXXXXXX" />
+		<property name="password" value="XXXXXXX" />
+	</bean>
+</beans>
